@@ -322,7 +322,6 @@
                     const cellValue = row[cellKey] ? row[cellKey].toString().trim().toLowerCase() : '';
                     let wonPoints = 0;
 
-                    // Support "1", "W", "Yes", "Won" or putting the actual points like "15" in the cell
                     if (cellValue === '1' || cellValue === 'yes' || cellValue === 'w' || cellValue === 'won') {
                         wonPoints = eventPoints;
                     } else if (!isNaN(parseInt(cellValue)) && parseInt(cellValue) > 0) {
@@ -337,7 +336,6 @@
                 });
             });
 
-            // Sort by descending points
             sectionsData.sort((a, b) => b.points - a.points);
             renderLeaderboard();
         }
@@ -372,7 +370,6 @@
                 leaderboardContainer.innerHTML += html;
             });
 
-            // Ensure bars animate when they spawn in
             setTimeout(() => {
                 const bars = document.querySelectorAll('.bar-animate');
                 bars.forEach(bar => {
@@ -411,7 +408,6 @@
             if (e.target === this) closeModal();
         });
 
-        // Trigger Animations on Scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -454,11 +450,10 @@
         function renderScheduleTimeline(data) {
             const timeline = document.getElementById('schedule-timeline');
             
-            // Group data by Date
             const groupedData = {};
             data.forEach(row => {
                 const date = row['Date'] ? row['Date'].trim() : null;
-                if (!date) return; // Skip rows with no Date
+                if (!date) return; 
                 
                 if (!groupedData[date]) {
                     groupedData[date] = [];
@@ -476,10 +471,10 @@
             for (const [date, events] of Object.entries(groupedData)) {
                 let eventsHtml = '';
                 events.forEach(event => {
-                    // Map headers precisely as written in your columns
+                    // Check for multiple possible column names for "Match up" just in case there are spaces
                     const time = event['Time'] || 'TBA';
                     const activity = event['Activity'] || 'Unknown Event';
-                    const matchup = event['Matchup'] || 'All Sections';
+                    const matchup = event['Match up'] || event['Matchup'] || event['Match Up'] || 'All Sections';
                     const venue = event['Venue'] || 'TBA';
 
                     eventsHtml += `
@@ -509,7 +504,6 @@
                 `;
             }
 
-            // Populate the timeline smoothly
             timeline.style.opacity = '0';
             setTimeout(() => {
                 timeline.innerHTML = html;
@@ -518,7 +512,6 @@
             }, 300);
         }
 
-        // Fetch data when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             fetchScheduleData();
             fetchLeaderboardData();
